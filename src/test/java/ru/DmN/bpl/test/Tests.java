@@ -8,6 +8,7 @@ import ru.DmN.bpl.annotations.BytecodeProcessor;
 
 import java.lang.invoke.*;
 
+@SuppressWarnings("unused")
 @BytecodeProcessor
 public class Tests {
     /**

@@ -5,6 +5,7 @@ import ru.DmN.bpl.annotations.Const;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodType;
 
+@SuppressWarnings("unused")
 public final class BytecodeUtils {
     public static final String CLASS_NAME = BytecodeUtils.class.getName().replace('.', '/');
 

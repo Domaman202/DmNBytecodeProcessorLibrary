@@ -11,7 +11,6 @@ public class CallBuilderAction extends AbstractAction {
     }
 
     public boolean isEnd() {
-//        return !method.desc.endsWith(CallBuilder.CLASS_NAME + ";");
         return method.name.startsWith("end");
     }
 }

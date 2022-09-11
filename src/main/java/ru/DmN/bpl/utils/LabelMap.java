@@ -14,23 +14,18 @@ public class LabelMap extends HashMap<String, LabelNode> {
         this.node = node;
     }
 
-    public Label getLabel(Object key) {
-        return get(key).getLabel();
-    }
-
     @Override
     public LabelNode get(Object key) {
         if (this.containsKey(key))
             return super.get(key);
-        LabelNode label;
         try {
             var m = MethodNode.class.getDeclaredMethod("getLabelNode", Label.class);
             m.setAccessible(true);
-            label = (LabelNode) m.invoke(this.node, new Label());
+            var label = (LabelNode) m.invoke(this.node, new Label());
+            this.put((String) key, label);
+            return label;
         } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
-        this.put((String) key, label);
-        return label;
     }
 }

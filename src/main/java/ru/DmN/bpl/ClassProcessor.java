@@ -282,7 +282,7 @@ public class ClassProcessor extends ClassNode {
                     method.instructions.remove(instr);
                     method.instructions.remove(method.instructions.get(i));
                     method.instructions.remove(method.instructions.get(i));
-                    var actions = Action$parse(method, instr, i, CallBuilderAction::new);
+                    var actions = Action$parse(method, i, CallBuilderAction::new);
                     for (int j = 0; j < actions.size(); j++) {
                         var action = actions.get(j);
                         var aname = action.method.name;
@@ -349,7 +349,7 @@ public class ClassProcessor extends ClassNode {
                         method.instructions.remove(inst);
                     } else
                         method.instructions.remove(method.instructions.get(++i));
-                    var actions = Action$parse(method, instr, i, FieldBuilderAction::new);
+                    var actions = Action$parse(method, i, FieldBuilderAction::new);
                     for (FieldBuilderAction action : actions) {
                         if (action.method.name.startsWith("get"))
                             replaceOpcode(method, action.method, new FieldInsnNode(isStatic ? Opcodes.GETSTATIC : Opcodes.GETFIELD, owner_, name_, desc_));
@@ -361,7 +361,7 @@ public class ClassProcessor extends ClassNode {
         }
     }
 
-    public static void buildIndyLdc(MethodNode method, List<CallBuilderAction> actions, CallBuilderAction action, AtomicInteger j, BuildIndyLdcNode builder) {
+    protected static void buildIndyLdc(MethodNode method, List<CallBuilderAction> actions, CallBuilderAction action, AtomicInteger j, BuildIndyLdcNode builder) {
         var args = new Object[action.parameters.size() < 6 ? 0 : (int) parseObject(action.parameters.get(5))];
         for (int k = 0; k < args.length; k++) {
             var act = actions.get(j.incrementAndGet());
@@ -396,7 +396,7 @@ public class ClassProcessor extends ClassNode {
         return ((LdcInsnNode) node).cst;
     }
 
-    public static <T extends AbstractAction> List<T> Action$parse(MethodNode method, AbstractInsnNode instr, int i, AbstractAction.Factory<T> factory) {
+    public static <T extends AbstractAction> List<T> Action$parse(MethodNode method, int i, AbstractAction.Factory<T> factory) {
         var actions = new ArrayList<T>();
         var k = new AtomicInteger(i);
         do {

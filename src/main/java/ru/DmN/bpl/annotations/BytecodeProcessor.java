@@ -9,5 +9,4 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.CLASS)
 @Target({ElementType.CONSTRUCTOR, ElementType.METHOD, ElementType.TYPE})
 public @interface BytecodeProcessor {
-
 }
