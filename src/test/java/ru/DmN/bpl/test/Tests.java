@@ -3,6 +3,7 @@ package ru.DmN.bpl.test;
 import org.junit.jupiter.api.Assertions;
 import ru.DmN.bpl.BytecodeUtils;
 import ru.DmN.bpl.CallBuilder;
+import ru.DmN.bpl.FieldBuilder;
 import ru.DmN.bpl.annotations.BytecodeProcessor;
 
 import java.lang.invoke.*;
@@ -83,7 +84,56 @@ public class Tests {
         Assertions.assertEquals(a.value + b, c);
     }
 
-    public static void test777() throws ClassNotFoundException, NoSuchFieldException {
+
+    /**
+     * FieldBuilder №1
+     * Получение статического поля
+     */
+    public static void test7() {
+        var value = new FieldBuilder("java/lang/System", "out", "Ljava/io/PrintStream;").getA();
+        Assertions.assertEquals(System.out, value);
+    }
+
+    /**
+     * FieldBuilder №2
+     * Получение обычного поля
+     */
+    public static void test8() {
+        var obj = new TestClass1(777);
+        var value = new FieldBuilder("ru/DmN/bpl/test/Tests$TestClass1", "value", "I", obj).getI();
+        Assertions.assertEquals(obj.value, value);
+    }
+
+    /**
+     * FieldBuilder №3
+     * Установка статического поля
+     */
+    public static void test9() {
+        new FieldBuilder("ru/DmN/bpl/test/Tests$TestClass2", "GLOBAL_COUNTER", "I").set(202);
+        Assertions.assertEquals(TestClass2.GLOBAL_COUNTER, 202);
+
+        new FieldBuilder("ru/DmN/bpl/test/Tests$TestClass2", "GLOBAL_COUNTER", "I").set(303);
+        Assertions.assertEquals(TestClass2.GLOBAL_COUNTER, 303);
+    }
+
+    /**
+     * FieldBuilder №4
+     * Установка обычного поля
+     */
+    public static void test10() {
+        var obj = new TestClass2(228);
+        new FieldBuilder("ru/DmN/bpl/test/Tests$TestClass2", "value", "I", obj).set(337);
+        Assertions.assertEquals(obj.value, 337);
+    }
+
+    /**
+     *
+     */
+    public static void test11() {
+
+    }
+
+    public static void test777() {
         System.out.println("All success!");
     }
 
@@ -113,6 +163,19 @@ public class Tests {
     }
 
     public record TestClass1(int value) {
+        public int add(int b) {
+            return value + b;
+        }
+    }
+
+    public static class TestClass2 {
+        public static int GLOBAL_COUNTER = (int) (Math.random() * 10);
+        public int value;
+
+        public TestClass2(int value) {
+            this.value = value;
+        }
+
         public int add(int b) {
             return value + b;
         }

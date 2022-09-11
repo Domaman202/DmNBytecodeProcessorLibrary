@@ -76,42 +76,6 @@ public final class BytecodeUtils {
         throw THROW;
     }
 
-    public static void pop() {
-        throw THROW;
-    }
-
-    public static void pop2() {
-        throw THROW;
-    }
-
-    public static void dup() {
-        throw THROW;
-    }
-
-    public static void dup_x1() {
-        throw THROW;
-    }
-
-    public static void dup_x2() {
-        throw THROW;
-    }
-
-    public static void dup2() {
-        throw THROW;
-    }
-
-    public static void dup2_x1() {
-        throw THROW;
-    }
-
-    public static void dup2_x2() {
-        throw THROW;
-    }
-
-    public static void swap() {
-        throw THROW;
-    }
-
     /// GOTO
     public static void jmp(@Const String name) {
         throw THROW;
