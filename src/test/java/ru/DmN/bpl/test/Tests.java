@@ -127,10 +127,35 @@ public class Tests {
     }
 
     /**
-     *
+     * InstanceOf
      */
     public static void test11() {
+        var f = BytecodeUtils.instanceOf(new Object(), "java/lang/String");
+        Assertions.assertFalse(f);
+        var t = BytecodeUtils.instanceOf("", "java/lang/String");
+        Assertions.assertTrue(t);
+    }
 
+    /**
+     * Checkcast
+     */
+    public static void test12() {
+        Object obj = 12;
+        Integer i = BytecodeUtils.checkcast(obj, "java/lang/Integer");
+        Assertions.assertEquals(i, 12);
+    }
+
+    /**
+     * Throw
+     */
+    public static void test13() {
+        try {
+            var throwable = new Throwable("Success!");
+            BytecodeUtils.athrow(throwable); // throw throwable
+            Assertions.fail();
+        } catch (Throwable throwable) {
+            Assertions.assertEquals(throwable.getMessage(), "Success!");
+        }
     }
 
     public static void test777() {
