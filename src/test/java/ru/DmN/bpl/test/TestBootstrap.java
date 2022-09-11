@@ -25,6 +25,7 @@ public class TestBootstrap {
         }
     }
 
+    @SuppressWarnings("removal")
     @Override
     protected void finalize() throws Throwable {
         try {
