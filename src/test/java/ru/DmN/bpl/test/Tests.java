@@ -1,6 +1,7 @@
 package ru.DmN.bpl.test;
 
 import org.junit.jupiter.api.Assertions;
+import org.objectweb.asm.Opcodes;
 import ru.DmN.bpl.BytecodeUtils;
 import ru.DmN.bpl.CallBuilder;
 import ru.DmN.bpl.FieldBuilder;
@@ -157,6 +158,37 @@ public class Tests {
         } catch (Throwable throwable) {
             Assertions.assertEquals(throwable.getMessage(), "Success!");
         }
+    }
+
+    /**
+     * Ldc №1
+     * Class
+     */
+    public static void test14() throws ClassNotFoundException {
+        var cfn = Class.forName("java.lang.Object");
+        var ldc = BytecodeUtils.ldc$class("java/lang/Object");
+        Assertions.assertEquals(cfn, ldc);
+    }
+
+    /**
+     * Ldc №2
+     * MethodType
+     */
+    public static void test15() {
+        var obj = MethodType.methodType(void.class, int.class);
+        var ldc = BytecodeUtils.ldc$mt("(I)V");
+        Assertions.assertEquals(obj, ldc);
+    }
+
+    /**
+     * Ldc №3
+     * MethodHandle
+     */
+    public static void test16() throws NoSuchMethodException, IllegalAccessException {
+        var obj = MethodHandles.lookup().findStatic(TestClass0.class, "add", MethodType.methodType(int.class, int.class, int.class));
+        var ldc = BytecodeUtils.ldc$mh(Opcodes.H_INVOKESTATIC, "ru/DmN/bpl/test/Tests$TestClass0", "add", "(II)I", false);
+        Assertions.assertNotEquals(obj, ldc); // obj ptr != ldc ptr
+        Assertions.assertEquals(obj.toString(), ldc.toString()); // obj method == ldc method
     }
 
     public static void test777() {
