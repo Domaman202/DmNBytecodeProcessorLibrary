@@ -1,5 +1,7 @@
 package ru.DmN.bpl.annotations;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.annotation.*;
 
 /**
@@ -9,5 +11,5 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.CLASS)
 @Target(ElementType.TYPE)
 public @interface TRename {
-    String value();
+    @NotNull String value();
 }

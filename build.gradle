@@ -3,13 +3,14 @@ plugins {
 }
 
 group 'ru.DmN.BytecodeUtils'
-version '8.4'
+version '8.5'
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
+    implementation "org.jetbrains:annotations:23.0.0"
     implementation group: 'org.ow2.asm', name: 'asm', version: '9.3'
     implementation group: 'org.ow2.asm', name: 'asm-tree', version: '9.3'
     testImplementation files("inc/DmNUnsafeUtils-5.1.jar")

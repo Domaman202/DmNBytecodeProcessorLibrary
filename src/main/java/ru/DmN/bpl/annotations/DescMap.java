@@ -1,5 +1,7 @@
 package ru.DmN.bpl.annotations;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.annotation.*;
 
 /**
@@ -9,6 +11,6 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.CLASS)
 @Target(ElementType.TYPE)
 public @interface DescMap {
-    String[] odesc();
-    String[] ndesc();
+    @NotNull String[] odesc();
+    @NotNull String[] ndesc();
 }

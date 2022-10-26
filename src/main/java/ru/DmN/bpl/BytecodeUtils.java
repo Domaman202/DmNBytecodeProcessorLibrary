@@ -1,5 +1,7 @@
 package ru.DmN.bpl;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ru.DmN.bpl.annotations.Const;
 
 import java.lang.invoke.MethodHandle;
@@ -17,7 +19,7 @@ public final class BytecodeUtils {
         throw THROW;
     }
 
-    public static void spec$label(@Const String name) {
+    public static void spec$label(@NotNull @Const String name) {
         throw THROW;
     }
 
@@ -33,15 +35,15 @@ public final class BytecodeUtils {
         throw THROW;
     }
 
-    public static MethodType ldc$mt(@Const String desc) {
+    public static MethodType ldc$mt(@NotNull @Const String desc) {
         throw THROW;
     }
 
-    public static <T> Class<T> ldc$class(@Const String name) {
+    public static <T> Class<T> ldc$class(@NotNull @Const String name) {
         throw THROW;
     }
 
-    public static void load(Object v) {
+    public static void load(@Nullable Object v) {
         throw THROW;
     }
 
@@ -78,32 +80,32 @@ public final class BytecodeUtils {
     }
 
     /// GOTO
-    public static void jmp(@Const String name) {
+    public static void jmp(@NotNull @Const String name) {
         throw THROW;
     }
 
     /// NEW
-    public static <T> T alloc(@Const String clazz) {
+    public static <T> T alloc(@NotNull @Const String clazz) {
         throw THROW;
     }
 
-    public static void athrow(Throwable throwable) {
+    public static void athrow(@NotNull Throwable throwable) {
         throw THROW;
     }
 
-    public static <T> T checkcast(Object obj, @Const String desc) {
+    public static <T> T checkcast(@Nullable Object obj, @NotNull @Const String desc) {
         throw THROW;
     }
 
-    public static boolean instanceOf(Object obj, @Const String desc) {
+    public static boolean instanceOf(@Nullable Object obj, @NotNull @Const String desc) {
         throw THROW;
     }
 
-    public static void monitorenter(Object ref) {
+    public static void monitorenter(@NotNull Object ref) {
         throw THROW;
     }
 
-    public static void monitorexit(Object ref) {
+    public static void monitorexit(@NotNull Object ref) {
         throw THROW;
     }
 

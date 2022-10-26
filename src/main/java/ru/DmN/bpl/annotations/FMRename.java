@@ -1,5 +1,7 @@
 package ru.DmN.bpl.annotations;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.annotation.*;
 
 /**
@@ -9,9 +11,9 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.CLASS)
 @Target({ElementType.FIELD, ElementType.METHOD, ElementType.CONSTRUCTOR})
 public @interface FMRename {
-    String name() default "";
+    @NotNull String name() default "";
 
-    String desc() default "";
+    @NotNull String desc() default "";
 
-    String sign() default "";
+    @NotNull String sign() default "";
 }

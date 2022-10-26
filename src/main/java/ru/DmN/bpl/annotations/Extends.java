@@ -1,5 +1,7 @@
 package ru.DmN.bpl.annotations;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.annotation.*;
 
 /**
@@ -9,9 +11,9 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.CLASS)
 @Target(ElementType.TYPE)
 public @interface Extends {
-    String extend() default "";
+    @NotNull String extend() default "";
 
-    String[] impl() default "";
+    @NotNull String[] impl() default "";
 
     boolean deleteImpls() default false;
 }
