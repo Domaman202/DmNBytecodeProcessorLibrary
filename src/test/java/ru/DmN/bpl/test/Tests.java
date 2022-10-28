@@ -7,12 +7,16 @@ import ru.DmN.bpl.CallBuilder;
 import ru.DmN.bpl.FieldBuilder;
 import ru.DmN.bpl.annotations.BytecodeProcessor;
 import ru.DmN.bpl.annotations.DeleteLines;
+import ru.DmN.bpl.annotations.FMRename;
 
 import java.lang.invoke.*;
 
 @SuppressWarnings("unused")
 @BytecodeProcessor
 public class Tests {
+    @FMRename(desc = "Ljava/lang/Object;")
+    public static final Object test$field0 = Object.class;
+
     /**
      * Удаление кода №1
      */
@@ -25,7 +29,7 @@ public class Tests {
     /**
      * Удаление кода №2
      */
-    @DeleteLines(start = {30}, end = {31})
+    @DeleteLines(start = {34}, end = {35})
     public static void test17() {
         Assertions.fail();
     }
