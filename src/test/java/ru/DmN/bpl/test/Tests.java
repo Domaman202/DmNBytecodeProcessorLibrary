@@ -14,8 +14,8 @@ import java.lang.invoke.*;
 @SuppressWarnings("unused")
 @BytecodeProcessor
 public class Tests {
-    @FMRename(desc = "Ljava/lang/Object;")
-    public static final Object test$field0 = Object.class;
+    @FMRename(desc = "Ljava/lang/Class;")
+    public static Object test$field0;
 
     /**
      * Удаление кода №1
