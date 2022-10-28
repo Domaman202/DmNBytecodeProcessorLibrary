@@ -8,14 +8,22 @@ import ru.DmN.bpl.FieldBuilder;
 import ru.DmN.bpl.annotations.BytecodeProcessor;
 import ru.DmN.bpl.annotations.DeleteLines;
 import ru.DmN.bpl.annotations.FMRename;
+import ru.DmN.bpl.annotations.Modifiers;
 
 import java.lang.invoke.*;
+import java.lang.reflect.Modifier;
 
 @SuppressWarnings("unused")
 @BytecodeProcessor
 public class Tests {
     @FMRename(desc = "Ljava/lang/Class;")
+    @Modifiers(Modifier.PUBLIC | Modifier.STATIC | Modifier.FINAL)
     public static Object test$field0;
+
+    static {
+        var clazz = Tests.class;
+        new FieldBuilder("ru/DmN/bpl/test/Tests", "test$field0", "Ljava/lang/Class;").set(clazz);
+    }
 
     /**
      * Удаление кода №1
@@ -29,7 +37,7 @@ public class Tests {
     /**
      * Удаление кода №2
      */
-    @DeleteLines(start = {34}, end = {35})
+    @DeleteLines(start = {42}, end = {43})
     public static void test17() {
         Assertions.fail();
     }

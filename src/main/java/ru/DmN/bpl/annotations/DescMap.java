@@ -11,6 +11,13 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.CLASS)
 @Target(ElementType.TYPE)
 public @interface DescMap {
+    /**
+     * @return Старые дескрипторы
+     */
     @NotNull String[] odesc();
+
+    /**
+     * @return Новые дескрипторы
+     */
     @NotNull String[] ndesc();
 }

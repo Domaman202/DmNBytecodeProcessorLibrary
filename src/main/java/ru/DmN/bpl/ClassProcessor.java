@@ -58,6 +58,7 @@ public class ClassProcessor extends ClassNode {
                             this.visibleAnnotations = new ArrayList<>();
                         ((List<String>) data.get("value")).forEach(d -> this.visibleAnnotations.add(new AnnotationNode(d)));
                     }
+                    case "Modifiers" -> this.access = (int) data.get("value");
                 }
             }
         }
@@ -66,24 +67,28 @@ public class ClassProcessor extends ClassNode {
         fields:
         for (var field : this.fields) {
             for (var annotation : CollectionsHelper.combine(field.visibleAnnotations, field.invisibleAnnotations)) {
-                var data = wrapAnnData(annotation.values);
-                switch (processDescriptor(annotation.desc)) {
-                    case "ru/DmN/bpl/annotations/Delete" -> {
-                        ffr.add(field);
-                        continue fields;
-                    }
-                    case "ru/DmN/bpl/annotations/Annotations" -> {
-                        if (field.visibleAnnotations == null)
-                            field.visibleAnnotations = new ArrayList<>();
-                        ((List<String>) data.get("value")).forEach(d -> field.visibleAnnotations.add(new AnnotationNode(d)));
-                    }
-                    case "ru/DmN/bpl/annotations/FMRename" -> {
-                        if  (data.containsKey("name"))
-                            field.name = (String) data.get("name");
-                        if  (data.containsKey("desc"))
-                            field.desc = (String) data.get("desc");
-                        if (data.containsKey("sign"))
-                            field.signature = (String) data.get("sign");
+                var desc = processDescriptor(annotation.desc);
+                if (desc.startsWith("ru/DmN/bpl/annotations/")) {
+                    var data = wrapAnnData(annotation.values);
+                    switch (desc.substring(desc.lastIndexOf('/') + 1)) {
+                        case "Delete" -> {
+                            ffr.add(field);
+                            continue fields;
+                        }
+                        case "Annotations" -> {
+                            if (field.visibleAnnotations == null)
+                                field.visibleAnnotations = new ArrayList<>();
+                            ((List<String>) data.get("value")).forEach(d -> field.visibleAnnotations.add(new AnnotationNode(d)));
+                        }
+                        case "FMRename" -> {
+                            if (data.containsKey("name"))
+                                field.name = (String) data.get("name");
+                            if (data.containsKey("desc"))
+                                field.desc = (String) data.get("desc");
+                            if (data.containsKey("sign"))
+                                field.signature = (String) data.get("sign");
+                        }
+                        case "Modifiers" -> field.access = (int) data.get("value");
                     }
                 }
             }
@@ -97,52 +102,58 @@ public class ClassProcessor extends ClassNode {
             var deletes = new ArrayList<DeleteAnnotation>();
 
             for (var annotation : CollectionsHelper.combine(method.visibleAnnotations, method.invisibleAnnotations)) {
-                var data = wrapAnnData(annotation.values);
                 var desc = processDescriptor(annotation.desc);
-                switch (desc) {
-                    case "ru/DmN/bpl/annotations/ExtendSL" -> {
-                        if (data.containsKey("stack"))
-                            method.maxStack += (int) data.get("stack");
-                        if (data.containsKey("local"))
-                            method.maxLocals += (int) data.get("local");
-                    }
-                    case "ru/DmN/bpl/annotations/BytecodeProcessor" -> method$bcprocessor = true;
-                    case "ru/DmN/bpl/annotations/MakeConstructor" -> method.name = "<init>";
-                    case "ru/DmN/bpl/annotations/MakeClassInit" -> {
-                        for (var m : this.methods) {
-                            if (m.name.equals("<clinit>")) {
-                                this.methods.remove(m);
-                                break;
+                if (desc.startsWith("ru/DmN/bpl/annotations/")) {
+                    var data = wrapAnnData(annotation.values);
+                    switch (desc.substring(desc.lastIndexOf('/') + 1)) {
+                        case "ExtendSL" -> {
+                            if (data.containsKey("stack"))
+                                method.maxStack += (int) data.get("stack");
+                            if (data.containsKey("local"))
+                                method.maxLocals += (int) data.get("local");
+                        }
+                        case "BytecodeProcessor" -> method$bcprocessor = true;
+                        case "MakeConstructor" -> method.name = "<init>";
+                        case "MakeClassInit" -> {
+                            for (var m : this.methods) {
+                                if (m.name.equals("<clinit>")) {
+                                    this.methods.remove(m);
+                                    break;
+                                }
+                            }
+                            method.name = "<clinit>";
+                        }
+                        case "Delete" -> {
+                            mfr.add(method);
+                            continue methods;
+                        }
+                        case "DeleteLines" -> {
+                            var starts = (List<Integer>) data.get("start");
+                            var ends = (List<Integer>) data.get("end");
+                            for (int i = 0; i < data.size() / 2; i++) {
+                                deletes.add(new DeleteAnnotation(starts.get(i), ends.get(i)));
                             }
                         }
-                        method.name = "<clinit>";
-                    }
-                    case "ru/DmN/bpl/annotations/Delete" -> {
-                        mfr.add(method);
-                        continue methods;
-                    }
-                    case "ru/DmN/bpl/annotations/DeleteLines" -> {
-                        var starts = (List<Integer>) data.get("start");
-                        var ends = (List<Integer>) data.get("end");
-                        for (int i = 0; i < data.size() / 2; i++) {
-                            deletes.add(new DeleteAnnotation(starts.get(i), ends.get(i)));
+                        case "Annotations" -> {
+                            if (method.visibleAnnotations == null)
+                                method.visibleAnnotations = new ArrayList<>();
+                            ((List<String>) data.get("value")).forEach(d -> method.visibleAnnotations.add(new AnnotationNode(d)));
                         }
-                    }
-                    case "ru/DmN/bpl/annotations/Annotations" -> {
-                        if (method.visibleAnnotations == null)
-                            method.visibleAnnotations = new ArrayList<>();
-                        ((List<String>) data.get("value")).forEach(d -> method.visibleAnnotations.add(new AnnotationNode(d)));
-                    }
-                    case "ru/DmN/bpl/annotations/FMRename" -> {
-                        if  (data.containsKey("name"))
-                            method.name = (String) data.get("name");
-                        if  (data.containsKey("desc")) {
-                            method.desc = (String) data.get("desc");
-                            if (data.containsKey("sign"))
+                        case "FMRename" -> {
+                            if (data.containsKey("name"))
+                                method.name = (String) data.get("name");
+                            if (data.containsKey("desc")) {
+                                method.desc = (String) data.get("desc");
+                                if (data.containsKey("sign")) {
+                                    method.signature = (String) data.get("sign");
+                                } else {
+                                    method.signature = method.desc;
+                                }
+                            } else if (data.containsKey("sign")) {
                                 method.signature = (String) data.get("sign");
-                            else method.signature = method.desc;
-                        } else if (data.containsKey("sign"))
-                            method.signature = (String) data.get("sign");
+                            }
+                        }
+                        case "Modifiers" -> method.access = (int) data.get("value");
                     }
                 }
             }

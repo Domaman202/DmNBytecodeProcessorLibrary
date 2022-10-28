@@ -5,7 +5,9 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.annotation.*;
 
 /**
- * Переименовывает поля/методы (не проводит mapping)
+ * Переименовывает поля/методы
+ * Меняет дескриптор/сигнатуру полей/методов
+ * (не проводит mapping)
  */
 @Documented
 @Retention(RetentionPolicy.CLASS)
