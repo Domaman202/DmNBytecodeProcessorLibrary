@@ -29,35 +29,35 @@ public final class FieldBuilder {
         throw BytecodeUtils.THROW;
     }
 
-    public void set(@NoExpression Object v) {
+    public void set(@NoExpression Object value) {
         throw BytecodeUtils.THROW;
     }
 
-    public void set(@NoExpression double v) {
+    public void set(@NoExpression double value) {
         throw BytecodeUtils.THROW;
     }
 
-    public void set(@NoExpression float v) {
+    public void set(@NoExpression float value) {
         throw BytecodeUtils.THROW;
     }
 
-    public void set(@NoExpression long v) {
+    public void set(@NoExpression long value) {
         throw BytecodeUtils.THROW;
     }
 
-    public void set(@NoExpression int v) {
+    public void set(@NoExpression int value) {
         throw BytecodeUtils.THROW;
     }
 
-    public void set(@NoExpression short v) {
+    public void set(@NoExpression short value) {
         throw BytecodeUtils.THROW;
     }
 
-    public void set(@NoExpression byte v) {
+    public void set(@NoExpression byte value) {
         throw BytecodeUtils.THROW;
     }
 
-    public void set(@NoExpression boolean v) {
+    public void set(@NoExpression boolean value) {
         throw BytecodeUtils.THROW;
     }
 

@@ -19,35 +19,35 @@ public final class CallBuilder {
         throw BytecodeUtils.THROW;
     }
 
-    public CallBuilder arg(@NoExpression Object v) {
+    public CallBuilder arg(@NoExpression Object value) {
         throw BytecodeUtils.THROW;
     }
 
-    public CallBuilder arg(@NoExpression double v) {
+    public CallBuilder arg(@NoExpression double value) {
         throw BytecodeUtils.THROW;
     }
 
-    public CallBuilder arg(@NoExpression float v) {
+    public CallBuilder arg(@NoExpression float value) {
         throw BytecodeUtils.THROW;
     }
 
-    public CallBuilder arg(@NoExpression long v) {
+    public CallBuilder arg(@NoExpression long value) {
         throw BytecodeUtils.THROW;
     }
 
-    public CallBuilder arg(@NoExpression int v) {
+    public CallBuilder arg(@NoExpression int value) {
         throw BytecodeUtils.THROW;
     }
 
-    public CallBuilder arg(@NoExpression short v) {
+    public CallBuilder arg(@NoExpression short value) {
         throw BytecodeUtils.THROW;
     }
 
-    public CallBuilder arg(@NoExpression byte v) {
+    public CallBuilder arg(@NoExpression byte value) {
         throw BytecodeUtils.THROW;
     }
 
-    public CallBuilder arg(@NoExpression boolean v) {
+    public CallBuilder arg(@NoExpression boolean value) {
         throw BytecodeUtils.THROW;
     }
 
