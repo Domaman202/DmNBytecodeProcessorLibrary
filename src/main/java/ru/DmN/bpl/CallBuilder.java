@@ -1,5 +1,6 @@
 package ru.DmN.bpl;
 
+import org.jetbrains.annotations.ApiStatus;
 import ru.DmN.bpl.annotations.Const;
 import ru.DmN.bpl.annotations.NoExpression;
 import ru.DmN.bpl.annotations.SingleLine;
@@ -7,6 +8,7 @@ import ru.DmN.bpl.annotations.SingleLine;
 @SuppressWarnings("unused")
 @SingleLine
 public final class CallBuilder {
+    @ApiStatus.Internal
     public static final String CLASS_NAME = CallBuilder.class.getName().replace('.', '/');
 
     public CallBuilder() {

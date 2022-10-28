@@ -46,7 +46,7 @@ public class Tests {
      * Вставка `nop` опкода
      */
     public static void test1() {
-        BytecodeUtils.nop();
+        BytecodeUtils.spec$opcode(0x0); // NOP
     }
 
     /**

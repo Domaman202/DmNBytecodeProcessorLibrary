@@ -1,18 +1,30 @@
 package ru.DmN.bpl;
 
+import org.jetbrains.annotations.ApiStatus;
 import ru.DmN.bpl.annotations.Const;
 import ru.DmN.bpl.annotations.NoExpression;
 import ru.DmN.bpl.annotations.SingleLine;
-
 @SuppressWarnings("unused")
 @SingleLine
 public final class FieldBuilder {
+    @ApiStatus.Internal
     public static final String CLASS_NAME = FieldBuilder.class.getName().replace('.', '/');
 
+    /**
+     * @param owner "Класс-Владелец" поля
+     * @param name Имя поля
+     * @param desc Дескриптор поля
+     */
     public FieldBuilder(@Const String owner, @Const String name, @Const String desc) {
         throw BytecodeUtils.THROW;
     }
 
+    /**
+     * @param owner "Класс-Владелец" поля
+     * @param name Имя поля
+     * @param desc Дескриптор поля
+     * @param instance Объект
+     */
     public FieldBuilder(@Const String owner, @Const String name, @Const String desc, @NoExpression Object instance) {
         throw BytecodeUtils.THROW;
     }

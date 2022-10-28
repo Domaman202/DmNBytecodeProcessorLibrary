@@ -243,7 +243,6 @@ public class ClassProcessor extends ClassNode {
                             instructions.remove(inst);
                             replaceOpcode(method, instr, new InsnNode((Integer) parseObject(inst)));
                         }
-                        case "nop" -> replaceOpcode(method, instr, Opcodes.NOP);
                         case "ldc$mh" -> {
                             var inst0 = instructions.get(--i); // isInterface
                             instructions.remove(inst0);
@@ -274,15 +273,6 @@ public class ClassProcessor extends ClassNode {
                             replaceOpcode(method, instr, new LdcInsnNode(Type.getType("L" + ((LdcInsnNode) inst).cst + ";")));
                         }
                         case "load" -> instructions.remove(instr);
-                        case "pop" -> replaceOpcode(method, instr, Opcodes.POP);
-                        case "pop2" -> replaceOpcode(method, instr, Opcodes.POP2);
-                        case "dup" -> replaceOpcode(method, instr, Opcodes.DUP);
-                        case "dup_x1" -> replaceOpcode(method, instr, Opcodes.DUP_X1);
-                        case "dup_x2" -> replaceOpcode(method, instr, Opcodes.DUP_X2);
-                        case "dup2" -> replaceOpcode(method, instr, Opcodes.DUP2);
-                        case "dup2_x1" -> replaceOpcode(method, instr, Opcodes.DUP2_X1);
-                        case "dup2_x2" -> replaceOpcode(method, instr, Opcodes.DUP2_X2);
-                        case "swap" -> replaceOpcode(method, instr, Opcodes.SWAP);
                         case "jmp" -> {
                             var inst = instructions.get(--i);
                             instructions.remove(inst);
