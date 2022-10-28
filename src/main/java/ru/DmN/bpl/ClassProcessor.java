@@ -93,7 +93,8 @@ public class ClassProcessor extends ClassNode {
         var mfr = new ArrayList<MethodNode>();
         methods:
         for (var method : this.methods) {
-            var bcprocessed = false;
+            var method$bcprocessor = bcprocessor;
+            var deletes = new ArrayList<DeleteAnnotation>();
 
             for (var annotation : CollectionsHelper.combine(method.visibleAnnotations, method.invisibleAnnotations)) {
                 var data = wrapAnnData(annotation.values);
@@ -105,10 +106,7 @@ public class ClassProcessor extends ClassNode {
                         if (data.containsKey("local"))
                             method.maxLocals += (int) data.get("local");
                     }
-                    case "ru/DmN/bpl/annotations/BytecodeProcessor" -> {
-                        this.processBytecode(method);
-                        bcprocessed = true;
-                    }
+                    case "ru/DmN/bpl/annotations/BytecodeProcessor" -> method$bcprocessor = true;
                     case "ru/DmN/bpl/annotations/MakeConstructor" -> method.name = "<init>";
                     case "ru/DmN/bpl/annotations/MakeClassInit" -> {
                         for (var m : this.methods) {
@@ -122,6 +120,13 @@ public class ClassProcessor extends ClassNode {
                     case "ru/DmN/bpl/annotations/Delete" -> {
                         mfr.add(method);
                         continue methods;
+                    }
+                    case "ru/DmN/bpl/annotations/DeleteLines" -> {
+                        var starts = (List<Integer>) data.get("start");
+                        var ends = (List<Integer>) data.get("end");
+                        for (int i = 0; i < data.size() / 2; i++) {
+                            deletes.add(new DeleteAnnotation(starts.get(i), ends.get(i)));
+                        }
                     }
                     case "ru/DmN/bpl/annotations/Annotations" -> {
                         if (method.visibleAnnotations == null)
@@ -142,8 +147,8 @@ public class ClassProcessor extends ClassNode {
                 }
             }
 
-            if (bcprocessor && !bcprocessed)
-                this.processBytecode(method);
+            if (method$bcprocessor)
+                this.processBytecode(method, deletes);
 
             if (cnm != null)
                 remap(method, cnm, this.name);
@@ -179,51 +184,66 @@ public class ClassProcessor extends ClassNode {
         }
     }
 
-    public void processBytecode(MethodNode method) {
+    public void processBytecode(MethodNode method, List<DeleteAnnotation> deletes) {
         var labels = new LabelMap(method);
+        var instructions = method.instructions;
 
-        var delmode = false;
-        for (int i = 0; i < method.instructions.size(); i++) {
-            var instr0 = method.instructions.get(i);
-            if (delmode) {
-                method.instructions.remove(instr0);
-                i--;
-            }
-            if (instr0 instanceof MethodInsnNode instr) {
+        for (int i = 0; i < instructions.size(); i++) {
+            var instr0 = instructions.get(i);
+            if (instr0 instanceof LineNumberNode instr) {
+                for (var delete : deletes) {
+                    if (delete.start() >= instr.line) {
+                        AbstractInsnNode instr1 = instr;
+                        while (i + 2 < instructions.size()) {
+                            instructions.remove(instr1);
+                            instr1 = instructions.get(i);
+                            if (instr1 instanceof LineNumberNode instr2 && instr2.line >= delete.end()) {
+                                break;
+                            }
+                        }
+                        instructions.remove(instr1);
+                    }
+                }
+            } else if (instr0 instanceof MethodInsnNode instr) {
                 if (instr.owner.equals(BytecodeUtils.CLASS_NAME)) {
-                    if (delmode && instr.name.equals("spec$endDelete"))
-                        delmode = false;
                     switch (instr.name) {
                         case "spec$startDelete" -> {
-                            method.instructions.remove(instr);
-                            delmode = true;
+                            AbstractInsnNode instr1 = instr;
+                            while (i + 2 < instructions.size()) {
+                                instructions.remove(instr1);
+                                instr1 = instructions.get(i);
+                                if (instr1 instanceof MethodInsnNode instr2 && instr2.owner.equals(BytecodeUtils.CLASS_NAME) && instr2.name.equals("spec$endDelete")) {
+                                    break;
+                                }
+                            }
+                            instructions.remove(instr1);
                         }
                         case "spec$fakeUsage" -> {
-                            method.instructions.remove(instr);
-                            method.instructions.remove(method.instructions.get(--i));
+                            instructions.remove(instr);
+                            instructions.remove(instructions.get(--i));
                         }
                         case "spec$label" -> {
-                            var inst = method.instructions.get(--i);
-                            method.instructions.remove(inst);
+                            var inst = instructions.get(--i);
+                            instructions.remove(inst);
                             replaceOpcode(method, instr, labels.get(((LdcInsnNode) inst).cst));
                         }
                         case "spec$opcode" -> {
-                            var inst = method.instructions.get(--i);
-                            method.instructions.remove(inst);
+                            var inst = instructions.get(--i);
+                            instructions.remove(inst);
                             replaceOpcode(method, instr, new InsnNode((Integer) parseObject(inst)));
                         }
                         case "nop" -> replaceOpcode(method, instr, Opcodes.NOP);
                         case "ldc$mh" -> {
-                            var inst0 = method.instructions.get(--i); // isInterface
-                            method.instructions.remove(inst0);
-                            var inst1 = method.instructions.get(--i); // desc
-                            method.instructions.remove(inst1);
-                            var inst2 = method.instructions.get(--i); // name
-                            method.instructions.remove(inst2);
-                            var inst3 = method.instructions.get(--i); // owner
-                            method.instructions.remove(inst3);
-                            var inst4 = method.instructions.get(--i); // tag
-                            method.instructions.remove(inst4);
+                            var inst0 = instructions.get(--i); // isInterface
+                            instructions.remove(inst0);
+                            var inst1 = instructions.get(--i); // desc
+                            instructions.remove(inst1);
+                            var inst2 = instructions.get(--i); // name
+                            instructions.remove(inst2);
+                            var inst3 = instructions.get(--i); // owner
+                            instructions.remove(inst3);
+                            var inst4 = instructions.get(--i); // tag
+                            instructions.remove(inst4);
                             replaceOpcode(method, instr, new LdcInsnNode(new Handle(
                                     (int) parseObject(inst4),
                                     (String) parseObject(inst3),
@@ -233,16 +253,16 @@ public class ClassProcessor extends ClassNode {
                             )));
                         }
                         case "ldc$mt" -> {
-                            var inst = method.instructions.get(--i);
-                            method.instructions.remove(inst);
+                            var inst = instructions.get(--i);
+                            instructions.remove(inst);
                             replaceOpcode(method, instr, new LdcInsnNode(Type.getType((String) ((LdcInsnNode) inst).cst)));
                         }
                         case "ldc$class" -> {
-                            var inst = method.instructions.get(--i);
-                            method.instructions.remove(inst);
+                            var inst = instructions.get(--i);
+                            instructions.remove(inst);
                             replaceOpcode(method, instr, new LdcInsnNode(Type.getType("L" + ((LdcInsnNode) inst).cst + ";")));
                         }
-                        case "load" -> method.instructions.remove(instr);
+                        case "load" -> instructions.remove(instr);
                         case "pop" -> replaceOpcode(method, instr, Opcodes.POP);
                         case "pop2" -> replaceOpcode(method, instr, Opcodes.POP2);
                         case "dup" -> replaceOpcode(method, instr, Opcodes.DUP);
@@ -253,24 +273,24 @@ public class ClassProcessor extends ClassNode {
                         case "dup2_x2" -> replaceOpcode(method, instr, Opcodes.DUP2_X2);
                         case "swap" -> replaceOpcode(method, instr, Opcodes.SWAP);
                         case "jmp" -> {
-                            var inst = method.instructions.get(--i);
-                            method.instructions.remove(inst);
+                            var inst = instructions.get(--i);
+                            instructions.remove(inst);
                             replaceOpcode(method, instr, new JumpInsnNode(Opcodes.GOTO, labels.get(((LdcInsnNode) inst).cst)));
                         }
                         case "alloc" -> {
-                            var inst = method.instructions.get(--i);
-                            method.instructions.remove(inst);
+                            var inst = instructions.get(--i);
+                            instructions.remove(inst);
                             replaceOpcode(method, instr, new TypeInsnNode(Opcodes.NEW, (String) ((LdcInsnNode) inst).cst));
                         }
                         case "athrow" -> replaceOpcode(method, instr, Opcodes.ATHROW);
                         case "checkcast" -> {
-                            var inst = method.instructions.get(--i);
-                            method.instructions.remove(inst);
+                            var inst = instructions.get(--i);
+                            instructions.remove(inst);
                             replaceOpcode(method, instr, new TypeInsnNode(Opcodes.CHECKCAST, (String) ((LdcInsnNode) inst).cst));
                         }
                         case "instanceOf" -> {
-                            var inst = method.instructions.get(--i);
-                            method.instructions.remove(inst);
+                            var inst = instructions.get(--i);
+                            instructions.remove(inst);
                             replaceOpcode(method, instr, new TypeInsnNode(Opcodes.INSTANCEOF, (String) ((LdcInsnNode) inst).cst));
                         }
                         case "monitorenter" -> replaceOpcode(method, instr, Opcodes.MONITORENTER);
@@ -279,9 +299,9 @@ public class ClassProcessor extends ClassNode {
                 }
             } else if (instr0 instanceof TypeInsnNode instr) {
                 if (instr.desc.equals(CallBuilder.CLASS_NAME)) {
-                    method.instructions.remove(instr);
-                    method.instructions.remove(method.instructions.get(i));
-                    method.instructions.remove(method.instructions.get(i));
+                    instructions.remove(instr);
+                    instructions.remove(instructions.get(i));
+                    instructions.remove(instructions.get(i));
                     var actions = Action$parse(method, i, CallBuilderAction::new);
                     for (int j = 0; j < actions.size(); j++) {
                         var action = actions.get(j);
@@ -292,7 +312,7 @@ public class ClassProcessor extends ClassNode {
                                 var _class = (LdcInsnNode) action.parameters.get(0);
                                 replaceOpcode(method, _class, new TypeInsnNode(Opcodes.NEW, (String) _class.cst));
                             }
-                            case "arg" -> method.instructions.remove(action.method);
+                            case "arg" -> instructions.remove(action.method);
                             case "invokeDynamic" -> {
                                 var atomicJ = new AtomicInteger(j);
                                 buildIndyLdc(method, actions, action, atomicJ, InvokeDynamicInsnNode::new);
@@ -305,7 +325,7 @@ public class ClassProcessor extends ClassNode {
                             }
                             default -> {
                                 if (aname.startsWith("end"))
-                                    method.instructions.remove(action.method);
+                                    instructions.remove(action.method);
                                 else if (aname.startsWith("invoke")) {
                                     var name_ = (String) ((LdcInsnNode) action.parameters.get(0)).cst;
                                     var desc_ = (String) ((LdcInsnNode) action.parameters.get(1)).cst;
@@ -324,31 +344,31 @@ public class ClassProcessor extends ClassNode {
                                             default -> throw new Error("Не удалось распознать тип вызова!");
                                         };
                                     }
-                                    method.instructions.set(action.method, new MethodInsnNode(opcode, clazz_, name_, desc_, isInterface_));
-                                    action.parameters.forEach(method.instructions::remove);
+                                    instructions.set(action.method, new MethodInsnNode(opcode, clazz_, name_, desc_, isInterface_));
+                                    action.parameters.forEach(instructions::remove);
                                 }
                             }
                         }
                     }
                 } else if (instr.desc.equals(FieldBuilder.CLASS_NAME)) {
-                    method.instructions.remove(instr);
-                    method.instructions.remove(method.instructions.get(i));
-                    var inst =  method.instructions.get(i);
+                    instructions.remove(instr);
+                    instructions.remove(instructions.get(i));
+                    var inst =  instructions.get(i);
                     var owner_ = (String) ((LdcInsnNode) inst).cst;
-                    method.instructions.remove(inst);
-                    inst = method.instructions.get(i);
+                    instructions.remove(inst);
+                    inst = instructions.get(i);
                     var name_ = (String) ((LdcInsnNode) inst).cst;
-                    method.instructions.remove(inst);
-                    inst = method.instructions.get(i);
+                    instructions.remove(inst);
+                    inst = instructions.get(i);
                     var desc_ = (String) ((LdcInsnNode) inst).cst;
-                    method.instructions.remove(inst);
-                    inst = method.instructions.get(i);
+                    instructions.remove(inst);
+                    inst = instructions.get(i);
                     var isStatic = false;
                     if (inst instanceof MethodInsnNode) {
                         isStatic = true;
-                        method.instructions.remove(inst);
+                        instructions.remove(inst);
                     } else
-                        method.instructions.remove(method.instructions.get(++i));
+                        instructions.remove(instructions.get(++i));
                     var actions = Action$parse(method, i, FieldBuilderAction::new);
                     for (FieldBuilderAction action : actions) {
                         if (action.method.name.startsWith("get"))

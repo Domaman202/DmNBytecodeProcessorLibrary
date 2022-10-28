@@ -3,7 +3,7 @@ plugins {
 }
 
 group 'ru.DmN.BytecodeUtils'
-version '8.5'
+version '9.0'
 
 repositories {
     mavenCentral()

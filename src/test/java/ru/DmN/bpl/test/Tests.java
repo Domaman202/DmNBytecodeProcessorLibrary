@@ -6,6 +6,7 @@ import ru.DmN.bpl.BytecodeUtils;
 import ru.DmN.bpl.CallBuilder;
 import ru.DmN.bpl.FieldBuilder;
 import ru.DmN.bpl.annotations.BytecodeProcessor;
+import ru.DmN.bpl.annotations.DeleteLines;
 
 import java.lang.invoke.*;
 
@@ -13,12 +14,20 @@ import java.lang.invoke.*;
 @BytecodeProcessor
 public class Tests {
     /**
-     * Удаление кода
+     * Удаление кода №1
      */
     public static void test0() {
         BytecodeUtils.spec$startDelete();
         Assertions.fail();
         BytecodeUtils.spec$endDelete();
+    }
+
+    /**
+     * Удаление кода №2
+     */
+    @DeleteLines(start = {30}, end = {31})
+    public static void test17() {
+        Assertions.fail();
     }
 
     /**
