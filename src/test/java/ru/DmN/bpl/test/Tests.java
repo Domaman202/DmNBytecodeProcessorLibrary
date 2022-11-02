@@ -107,6 +107,14 @@ public class Tests {
         Assertions.assertEquals(a.value + b, c);
     }
 
+    /**
+     * CallBuilder (alloc)
+     */
+    public static void test18() {
+        var obj = new CallBuilder("<init>", "(I)V", "ru/DmN/bpl/test/Tests$TestClass1").alloc().arg(202).invokeSpecial(false).endA();
+        Assertions.assertEquals(((TestClass1) obj).value, 202);
+    }
+
 
     /**
      * FieldBuilder №1

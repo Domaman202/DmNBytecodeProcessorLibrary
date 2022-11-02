@@ -318,8 +318,9 @@ public class ClassProcessor extends ClassNode {
                         var aname = action.method.name;
                         switch (aname) {
                             case "alloc" -> {
-                                replaceOpcode(method, action.method, Opcodes.DUP);
-                                replaceOpcode(method, instr1, new TypeInsnNode(Opcodes.NEW, clazz_));
+                                var node = new TypeInsnNode(Opcodes.NEW, clazz_);
+                                method.instructions.set(action.method, node);
+                                method.instructions.insert(node, new InsnNode(Opcodes.DUP));
                             }
                             case "arg" -> instructions.remove(action.method);
                             case "invokeDynamic" -> {
