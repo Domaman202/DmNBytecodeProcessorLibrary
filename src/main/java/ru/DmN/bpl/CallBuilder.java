@@ -15,7 +15,7 @@ public final class CallBuilder {
         throw BytecodeUtils.THROW;
     }
 
-    public CallBuilder alloc(@Const String name) {
+    public CallBuilder alloc() {
         throw BytecodeUtils.THROW;
     }
 

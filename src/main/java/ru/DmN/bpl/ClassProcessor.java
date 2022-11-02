@@ -203,12 +203,12 @@ public class ClassProcessor extends ClassNode {
             var instr0 = instructions.get(i);
             if (instr0 instanceof LineNumberNode instr) {
                 for (var delete : deletes) {
-                    if (delete.start() >= instr.line) {
+                    if (delete.start >= instr.line) {
                         AbstractInsnNode instr1 = instr;
                         while (i + 2 < instructions.size()) {
                             instructions.remove(instr1);
                             instr1 = instructions.get(i);
-                            if (instr1 instanceof LineNumberNode instr2 && instr2.line >= delete.end()) {
+                            if (instr1 instanceof LineNumberNode instr2 && instr2.line >= delete.end) {
                                 break;
                             }
                         }

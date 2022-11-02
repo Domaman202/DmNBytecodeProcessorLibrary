@@ -1,4 +1,10 @@
 package ru.DmN.bpl.utils;
 
-public record DeleteAnnotation(int start, int end) {
+public class DeleteAnnotation {
+    public final int start, end;
+
+    public DeleteAnnotation(int start, int end) {
+        this.start = start;
+        this.end = end;
+    }
 }

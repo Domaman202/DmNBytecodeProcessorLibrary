@@ -3,7 +3,7 @@ plugins {
 }
 
 group 'ru.DmN.BytecodeUtils'
-version '11.0'
+version '11.2'
 
 repositories {
     mavenCentral()
