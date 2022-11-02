@@ -11,7 +11,7 @@ public final class CallBuilder {
     @ApiStatus.Internal
     public static final String CLASS_NAME = CallBuilder.class.getName().replace('.', '/');
 
-    public CallBuilder() {
+    public CallBuilder(@Const String name, @Const String desc, @Const String clazz) {
         throw BytecodeUtils.THROW;
     }
 
@@ -51,27 +51,27 @@ public final class CallBuilder {
         throw BytecodeUtils.THROW;
     }
 
-    public CallBuilder invokeVirtual(@Const String name, @Const String desc, @Const String clazz) {
+    public CallBuilder invokeVirtual() {
         throw BytecodeUtils.THROW;
     }
 
-    public CallBuilder invokeSpecial(@Const String name, @Const String desc, @Const String clazz, @Const boolean isInterface) {
+    public CallBuilder invokeSpecial(@Const boolean isInterface) {
         throw BytecodeUtils.THROW;
     }
 
-    public CallBuilder invokeStatic(@Const String name, @Const String desc, @Const String clazz, @Const boolean isInterface) {
+    public CallBuilder invokeStatic(@Const boolean isInterface) {
         throw BytecodeUtils.THROW;
     }
 
-    public CallBuilder invokeInterface(@Const String name, @Const String desc, @Const String clazz) {
+    public CallBuilder invokeInterface() {
         throw BytecodeUtils.THROW;
     }
 
-    public CallBuilder invokeDynamic(@Const String name, @Const String desc, @Const String clazz, @Const String bname, @Const String bdesc) {
+    public CallBuilder invokeDynamic(@Const String bname, @Const String bdesc) {
         throw BytecodeUtils.THROW;
     }
 
-    public CallBuilder invokeDynamic(@Const String name, @Const String desc, @Const String clazz, @Const String bname, @Const String bdesc, @Const int argc) {
+    public CallBuilder invokeDynamic(@Const String bname, @Const String bdesc, @Const int argc) {
         throw BytecodeUtils.THROW;
     }
 

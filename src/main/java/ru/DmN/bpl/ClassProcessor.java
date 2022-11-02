@@ -302,6 +302,15 @@ public class ClassProcessor extends ClassNode {
                 if (instr.desc.equals(CallBuilder.CLASS_NAME)) {
                     instructions.remove(instr);
                     instructions.remove(instructions.get(i));
+                    var instr1 = instructions.get(i);
+                    var name_ = (String) ((LdcInsnNode) instr1).cst;
+                    instructions.remove(instr1);
+                    instr1 = instructions.get(i);
+                    var desc_ = (String) ((LdcInsnNode) instr1).cst;
+                    instructions.remove(instr1);
+                    instr1 = instructions.get(i);
+                    var clazz_ = (String) ((LdcInsnNode) instr1).cst;
+                    instructions.remove(instr1);
                     instructions.remove(instructions.get(i));
                     var actions = Action$parse(method, i, CallBuilderAction::new);
                     for (int j = 0; j < actions.size(); j++) {
@@ -310,34 +319,30 @@ public class ClassProcessor extends ClassNode {
                         switch (aname) {
                             case "alloc" -> {
                                 replaceOpcode(method, action.method, Opcodes.DUP);
-                                var _class = (LdcInsnNode) action.parameters.get(0);
-                                replaceOpcode(method, _class, new TypeInsnNode(Opcodes.NEW, (String) _class.cst));
+                                replaceOpcode(method, instr1, new TypeInsnNode(Opcodes.NEW, clazz_));
                             }
                             case "arg" -> instructions.remove(action.method);
                             case "invokeDynamic" -> {
                                 var atomicJ = new AtomicInteger(j);
-                                buildIndyLdc(method, actions, action, atomicJ, InvokeDynamicInsnNode::new);
+                                buildIndyLdc(method, actions, action, atomicJ, InvokeDynamicInsnNode::new, name_, desc_, clazz_);
                                 j = atomicJ.get();;
                             }
                             case "ldc" -> {
                                 var atomicJ = new AtomicInteger(j);
-                                buildIndyLdc(method, actions, action, atomicJ, (n, d, b, a) -> new LdcInsnNode(new ConstantDynamic(n, d, b, a)));
+                                buildIndyLdc(method, actions, action, atomicJ, (n, d, b, a) -> new LdcInsnNode(new ConstantDynamic(n, d, b, a)), name_, desc_, clazz_);
                                 j = atomicJ.get();;
                             }
                             default -> {
                                 if (aname.startsWith("end"))
                                     instructions.remove(action.method);
                                 else if (aname.startsWith("invoke")) {
-                                    var name_ = (String) ((LdcInsnNode) action.parameters.get(0)).cst;
-                                    var desc_ = (String) ((LdcInsnNode) action.parameters.get(1)).cst;
-                                    var clazz_ = (String) ((LdcInsnNode) action.parameters.get(2)).cst;
                                     boolean isInterface_;
                                     int opcode;
                                     if (aname.equals("invokeInterface")) {
                                         isInterface_ = true;
                                         opcode = Opcodes.INVOKEINTERFACE;
                                     } else {
-                                        isInterface_ = action.parameters.size() == 4 && action.parameters.get(3).getOpcode() != Opcodes.ICONST_0;
+                                        isInterface_ = action.parameters.size() == 1 && action.parameters.get(0).getOpcode() != Opcodes.ICONST_0;
                                         opcode = switch (aname) {
                                             case "invokeVirtual" -> Opcodes.INVOKEVIRTUAL;
                                             case "invokeStatic" -> Opcodes.INVOKESTATIC;
@@ -382,8 +387,8 @@ public class ClassProcessor extends ClassNode {
         }
     }
 
-    protected static void buildIndyLdc(MethodNode method, List<CallBuilderAction> actions, CallBuilderAction action, AtomicInteger j, BuildIndyLdcNode builder) {
-        var args = new Object[action.parameters.size() < 6 ? 0 : (int) parseObject(action.parameters.get(5))];
+    protected static void buildIndyLdc(MethodNode method, List<CallBuilderAction> actions, CallBuilderAction action, AtomicInteger j, BuildIndyLdcNode builder, String name_, String desc_, String clazz_) {
+        var args = new Object[action.parameters.size() < 3 ? 0 : (int) parseObject(action.parameters.get(2))];
         for (int k = 0; k < args.length; k++) {
             var act = actions.get(j.incrementAndGet());
             act.parameters.forEach(method.instructions::remove);
@@ -391,13 +396,13 @@ public class ClassProcessor extends ClassNode {
         }
         j.set(j.get() - args.length);
         var inst = builder.build(
-                (String) ((LdcInsnNode) action.parameters.get(0)).cst, // name
-                (String) ((LdcInsnNode) action.parameters.get(1)).cst, // desc
+                name_,
+                desc_,
                 new Handle(
                         Opcodes.H_INVOKESTATIC,
-                        (String) ((LdcInsnNode) action.parameters.get(2)).cst, // class
-                        (String) ((LdcInsnNode) action.parameters.get(3)).cst, // bootstrap name
-                        (String) ((LdcInsnNode) action.parameters.get(4)).cst, // bootstrap desc
+                        clazz_,
+                        (String) ((LdcInsnNode) action.parameters.get(0)).cst, // bootstrap name
+                        (String) ((LdcInsnNode) action.parameters.get(1)).cst, // bootstrap desc
                         false
                 ),
                 args

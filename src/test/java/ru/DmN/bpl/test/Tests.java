@@ -67,9 +67,9 @@ public class Tests {
     public static void test3() {
         var a = 12;
         var b = 21;
-        var c = new CallBuilder()
+        var c = new CallBuilder("add", "(II)I", "ru/DmN/bpl/test/Tests$TestClass0")
                 .arg(a).arg(b)
-                .invokeStatic("add", "(II)I", "ru/DmN/bpl/test/Tests$TestClass0", false)
+                .invokeStatic(false)
                 .endI();
         Assertions.assertEquals(a + b, c);
     }
@@ -80,9 +80,9 @@ public class Tests {
     public static void test4() {
         var a = new TestClass1(4);
         var b = 202;
-        var c = new CallBuilder()
+        var c = new CallBuilder("add", "(I)I", "ru/DmN/bpl/test/Tests$TestClass1")
                 .arg(a).arg(b)
-                .invokeVirtual("add", "(I)I", "ru/DmN/bpl/test/Tests$TestClass1")
+                .invokeVirtual()
                 .endI();
         Assertions.assertEquals(a.value + b, c);
     }
@@ -93,7 +93,7 @@ public class Tests {
     public static void test5() {
         var a = 707;
         var b = 70;
-        var c = new CallBuilder().arg(a).arg(b).invokeDynamic("add", "(II)I", "ru/DmN/bpl/test/Tests", "bootstrapA", "(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;)Ljava/lang/invoke/CallSite;").endI();
+        var c = new CallBuilder("add", "(II)I", "ru/DmN/bpl/test/Tests").arg(a).arg(b).invokeDynamic("bootstrapA", "(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;)Ljava/lang/invoke/CallSite;").endI();
         Assertions.assertEquals(a + b, c);
     }
 
@@ -103,7 +103,7 @@ public class Tests {
     public static void test6() {
         var a = new TestClass1(400);
         var b = 4;
-        var c = new CallBuilder().arg(a).arg(b).invokeDynamic("add", "(Lru/DmN/bpl/test/Tests$TestClass1;I)I", "ru/DmN/bpl/test/Tests", "bootstrap$", "(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/Class;ILjava/lang/Class;)Ljava/lang/invoke/CallSite;", 3).arg(TestClass1.class).arg(0).arg(Tests.class).endI();
+        var c = new CallBuilder("add", "(Lru/DmN/bpl/test/Tests$TestClass1;I)I", "ru/DmN/bpl/test/Tests").arg(a).arg(b).invokeDynamic("bootstrap$", "(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/Class;ILjava/lang/Class;)Ljava/lang/invoke/CallSite;", 3).arg(TestClass1.class).arg(0).arg(Tests.class).endI();
         Assertions.assertEquals(a.value + b, c);
     }
 
