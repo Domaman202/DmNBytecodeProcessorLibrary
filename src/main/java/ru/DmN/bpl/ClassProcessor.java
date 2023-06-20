@@ -5,6 +5,7 @@ import org.objectweb.asm.Handle;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;
+import ru.DmN.bpl.exceptions.ProcessException;
 import ru.DmN.bpl.utils.*;
 
 import java.util.ArrayList;
@@ -348,7 +349,7 @@ public class ClassProcessor extends ClassNode {
                                             case "invokeVirtual" -> Opcodes.INVOKEVIRTUAL;
                                             case "invokeStatic" -> Opcodes.INVOKESTATIC;
                                             case "invokeSpecial" -> Opcodes.INVOKESPECIAL;
-                                            default -> throw new Error("Не удалось распознать тип вызова!");
+                                            default -> throw new ProcessException("Не удалось распознать тип вызова!");
                                         };
                                     }
                                     instructions.set(action.method, new MethodInsnNode(opcode, clazz_, name_, desc_, isInterface_));

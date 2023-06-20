@@ -5,5 +5,6 @@ open module ru.DmN.bu {
 
     exports ru.DmN.bpl;
     exports ru.DmN.bpl.utils;
+    exports ru.DmN.bpl.exceptions;
     exports ru.DmN.bpl.annotations;
 }

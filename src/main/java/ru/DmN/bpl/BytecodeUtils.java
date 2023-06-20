@@ -3,8 +3,8 @@ package ru.DmN.bpl;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.objectweb.asm.Opcodes;
 import ru.DmN.bpl.annotations.Const;
+import ru.DmN.bpl.exceptions.NotProcessedInsertionException;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodType;
@@ -206,5 +206,5 @@ public final class BytecodeUtils {
     }
 
     @ApiStatus.Internal
-    public static final Error THROW = new Error("Не обработанная вставка!");
+    public static final NotProcessedInsertionException THROW = new NotProcessedInsertionException("Не обработанная вставка!");
 }
