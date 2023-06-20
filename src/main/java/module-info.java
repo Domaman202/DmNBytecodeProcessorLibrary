@@ -1,4 +1,4 @@
-open module ru.DmN.bu {
+open module ru.DmN.bpl {
     requires org.objectweb.asm;
     requires org.objectweb.asm.tree;
     requires org.jetbrains.annotations;
