@@ -5,11 +5,10 @@ import org.objectweb.asm.Opcodes;
 import ru.DmN.bpl.BytecodeUtils;
 import ru.DmN.bpl.CallBuilder;
 import ru.DmN.bpl.FieldBuilder;
-import ru.DmN.bpl.annotations.BytecodeProcessor;
-import ru.DmN.bpl.annotations.DeleteLines;
-import ru.DmN.bpl.annotations.FMRename;
-import ru.DmN.bpl.annotations.Modifiers;
+import ru.DmN.bpl.annotations.*;
+import ru.DmN.uu.Unsafe;
 
+import javax.swing.plaf.synth.SynthUI;
 import java.lang.invoke.*;
 import java.lang.reflect.Modifier;
 
@@ -220,6 +219,18 @@ public class Tests {
         Assertions.assertEquals(obj.toString(), ldc.toString()); // obj method == ldc method
     }
 
+    /**
+     * Множественное наследование
+     */
+    public static void test20() {
+        var obj0 = new TestClass3();
+        var obj1 = new TestClass4();
+        Assertions.assertEquals(obj0.foo(), 21);
+        Unsafe.unsafe.putLong(TestClass4.class, 16L, Unsafe.unsafe.getLong(Runnable.class, 16L));
+        Assertions.assertTrue(TestClass4.class.isInterface());
+        Assertions.assertEquals(obj1.foo(), 33);
+    }
+
     public static void test777() {
         System.out.println("All success!");
     }
@@ -265,6 +276,25 @@ public class Tests {
 
         public int add(int b) {
             return value + b;
+        }
+    }
+
+    public static class TestClass3 {
+        public int foo() {
+            return 21;
+        }
+    }
+
+    @BytecodeProcessor
+    @Extends(extend = "ru/DmN/bpl/test/Tests$TestClass3")
+    public static class TestClass4 {
+        @MakeConstructor
+        public void init() {
+            new CallBuilder("<init>", "()V", "ru/DmN/bpl/test/Tests$TestClass3").arg(this).invokeSpecial(false).end();
+        }
+
+        public int foo() {
+            return new CallBuilder("foo", "()I", "ru/DmN/bpl/test/Tests$TestClass3").arg(this).invokeSpecial(false).endI() + 12;
         }
     }
 }

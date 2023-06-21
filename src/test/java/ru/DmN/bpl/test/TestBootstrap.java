@@ -66,9 +66,12 @@ public class TestBootstrap {
                     throw new ClassNotFoundException(name);
                 var bytes = process(stream.readAllBytes());
                 if (dump) {
-                    var dfile = new File("dump/" + name + ".class");
+                    var dfile = new File("dump/" + name.replace('$', '/') + ".class");
                     if (dfile.exists())
                         dfile.delete();
+                    var i = name.lastIndexOf('$');
+                    if (i > -1)
+                        new File("dump/" + name.substring(0, i)).mkdirs();
                     dfile.createNewFile();
                     try (var fos = new FileOutputStream(dfile)) {
                         fos.write(bytes);

@@ -98,7 +98,8 @@ public class ClassProcessor extends ClassNode {
 
         var mfr = new ArrayList<MethodNode>();
         methods:
-        for (var method : this.methods) {
+        for (int i = 0; i < this.methods.size(); i++) {
+            var method = this.methods.get(i);
             var method$bcprocessor = bcprocessor;
             var deletes = new ArrayList<DeleteAnnotation>();
 
@@ -114,7 +115,17 @@ public class ClassProcessor extends ClassNode {
                                 method.maxLocals += (int) data.get("local");
                         }
                         case "BytecodeProcessor" -> method$bcprocessor = true;
-                        case "MakeConstructor" -> method.name = "<init>";
+                        case "MakeConstructor" -> {
+                            for (int j = 0; j < this.methods.size(); j++) {
+                                var it = this.methods.get(j);
+                                if (it.name.equals("<init>") && it.desc.equals(method.desc)) {
+                                    this.methods.remove(it);
+                                    i--;
+                                    break;
+                                }
+                            }
+                            method.name = "<init>";
+                        }
                         case "MakeClassInit" -> {
                             for (var m : this.methods) {
                                 if (m.name.equals("<clinit>")) {
@@ -131,8 +142,8 @@ public class ClassProcessor extends ClassNode {
                         case "DeleteLines" -> {
                             var starts = (List<Integer>) data.get("start");
                             var ends = (List<Integer>) data.get("end");
-                            for (int i = 0; i < data.size() / 2; i++) {
-                                deletes.add(new DeleteAnnotation(starts.get(i), ends.get(i)));
+                            for (int j = 0; j < data.size() / 2; j++) {
+                                deletes.add(new DeleteAnnotation(starts.get(j), ends.get(j)));
                             }
                         }
                         case "Annotations" -> {

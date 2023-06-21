@@ -2,8 +2,8 @@ plugins {
     id 'java'
 }
 
-group 'ru.DmN.BytecodeUtils'
-version '12.1'
+group 'ru.DmN.BytecodeProcessorLibrary'
+version '12.2'
 
 repositories {
     mavenCentral()
