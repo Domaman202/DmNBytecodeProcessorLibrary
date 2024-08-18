@@ -14,7 +14,7 @@ public final class BytecodeUtils {
     public static final String CLASS_NAME = BytecodeUtils.class.getName().replace('.', '/');
 
     /**
-     * Точка начала удаления кода , удаляет код до {@link BytecodeUtils#spec$startDelete()}
+     * Точка начала удаления кода , удаляет код до {@link BytecodeUtils#spec$endDelete()}
      */
     public static void spec$startDelete() {
         throw THROW;
@@ -66,7 +66,7 @@ public final class BytecodeUtils {
     }
 
     /**
-     * Вставка ldc для загрузки класса
+     * Вставка ldc для {@link Class}
      * @param name Имя класса
      * @return Класс
      * @param <T> Класс
