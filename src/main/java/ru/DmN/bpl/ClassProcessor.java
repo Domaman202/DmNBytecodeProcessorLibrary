@@ -450,6 +450,8 @@ public class ClassProcessor extends ClassNode {
             var instr = method.instructions.get(i.getAndIncrement());
             if (instr instanceof MethodInsnNode node)
                 return factory.construct(list, node);
+            if (instr.getOpcode() == -1)
+                continue;
             list.add(instr);
         }
     }

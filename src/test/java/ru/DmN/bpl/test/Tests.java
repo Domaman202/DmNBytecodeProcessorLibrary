@@ -80,7 +80,8 @@ public class Tests {
         var a = new TestClass1(4);
         var b = 202;
         var c = new CallBuilder("add", "(I)I", "ru/DmN/bpl/test/Tests$TestClass1")
-                .arg(a).arg(b)
+                .arg(a)
+                .arg(b)
                 .invokeVirtual()
                 .endI();
         Assertions.assertEquals(a.value + b, c);
@@ -92,7 +93,11 @@ public class Tests {
     public static void test5() {
         var a = 707;
         var b = 70;
-        var c = new CallBuilder("add", "(II)I", "ru/DmN/bpl/test/Tests").arg(a).arg(b).invokeDynamic("bootstrapA", "(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;)Ljava/lang/invoke/CallSite;").endI();
+        var c = new CallBuilder("add", "(II)I", "ru/DmN/bpl/test/Tests")
+                .arg(a)
+                .arg(b)
+                .invokeDynamic("bootstrapA", "(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;)Ljava/lang/invoke/CallSite;")
+                .endI();
         Assertions.assertEquals(a + b, c);
     }
 
@@ -102,7 +107,14 @@ public class Tests {
     public static void test6() {
         var a = new TestClass1(400);
         var b = 4;
-        var c = new CallBuilder("add", "(Lru/DmN/bpl/test/Tests$TestClass1;I)I", "ru/DmN/bpl/test/Tests").arg(a).arg(b).invokeDynamic("bootstrap$", "(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/Class;ILjava/lang/Class;)Ljava/lang/invoke/CallSite;", 3).arg(TestClass1.class).arg(0).arg(Tests.class).endI();
+        var c = new CallBuilder("add", "(Lru/DmN/bpl/test/Tests$TestClass1;I)I", "ru/DmN/bpl/test/Tests")
+                .arg(a)
+                .arg(b)
+                .invokeDynamic("bootstrap$", "(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/Class;ILjava/lang/Class;)Ljava/lang/invoke/CallSite;", 3)
+                .arg(TestClass1.class)
+                .arg(0)
+                .arg(Tests.class)
+                .endI();
         Assertions.assertEquals(a.value + b, c);
     }
 
@@ -110,7 +122,11 @@ public class Tests {
      * CallBuilder (alloc)
      */
     public static void test18() {
-        var obj = new CallBuilder("<init>", "(I)V", "ru/DmN/bpl/test/Tests$TestClass1").alloc().arg(202).invokeSpecial(false).endA();
+        var obj = new CallBuilder("<init>", "(I)V", "ru/DmN/bpl/test/Tests$TestClass1")
+                .alloc()
+                .arg(202)
+                .invokeSpecial(false)
+                .endA();
         Assertions.assertEquals(((TestClass1) obj).value, 202);
     }
 
