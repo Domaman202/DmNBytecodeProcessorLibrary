@@ -23,16 +23,7 @@ public class TestBootstrap {
                 method.invoke(null);
             }
         }
-    }
-
-    @SuppressWarnings("removal")
-    @Override
-    protected void finalize() throws Throwable {
-        try {
-            loader.close();
-        } finally {
-            super.finalize();
-        }
+        loader.close();
     }
 
     public static class SmartClassLoader extends URLClassLoader {
