@@ -8,20 +8,19 @@ import ru.DmN.bpl.FieldBuilder;
 import ru.DmN.bpl.annotations.*;
 import ru.DmN.uu.Unsafe;
 
-import javax.swing.plaf.synth.SynthUI;
 import java.lang.invoke.*;
 import java.lang.reflect.Modifier;
 
 @SuppressWarnings("unused")
 @BytecodeProcessor
-public class Tests {
+public class JavaTests {
     @FMRename(desc = "Ljava/lang/Class;")
     @Modifiers(Modifier.PUBLIC | Modifier.STATIC | Modifier.FINAL)
     public static Object test$field0;
 
     static {
-        var clazz = Tests.class;
-        new FieldBuilder("ru/DmN/bpl/test/Tests", "test$field0", "Ljava/lang/Class;").set(clazz);
+        var clazz = JavaTests.class;
+        new FieldBuilder("ru/DmN/bpl/test/JavaTests", "test$field0", "Ljava/lang/Class;").set(clazz);
     }
 
     /**
@@ -36,7 +35,7 @@ public class Tests {
     /**
      * Удаление кода №2
      */
-    @DeleteLines(start = {42}, end = {43})
+    @DeleteLines(start = {40}, end = {41})
     public static void test17() {
         Assertions.fail();
     }
@@ -66,8 +65,9 @@ public class Tests {
     public static void test3() {
         var a = 12;
         var b = 21;
-        var c = new CallBuilder("add", "(II)I", "ru/DmN/bpl/test/Tests$TestClass0")
-                .arg(a).arg(b)
+        var c = new CallBuilder("add", "(II)I", "ru/DmN/bpl/test/JavaTests$TestClass0")
+                .arg(a)
+                .arg(b)
                 .invokeStatic(false)
                 .endI();
         Assertions.assertEquals(a + b, c);
@@ -79,7 +79,7 @@ public class Tests {
     public static void test4() {
         var a = new TestClass1(4);
         var b = 202;
-        var c = new CallBuilder("add", "(I)I", "ru/DmN/bpl/test/Tests$TestClass1")
+        var c = new CallBuilder("add", "(I)I", "ru/DmN/bpl/test/JavaTests$TestClass1")
                 .arg(a)
                 .arg(b)
                 .invokeVirtual()
@@ -93,7 +93,7 @@ public class Tests {
     public static void test5() {
         var a = 707;
         var b = 70;
-        var c = new CallBuilder("add", "(II)I", "ru/DmN/bpl/test/Tests")
+        var c = new CallBuilder("add", "(II)I", "ru/DmN/bpl/test/JavaTests")
                 .arg(a)
                 .arg(b)
                 .invokeDynamic("bootstrapA", "(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;)Ljava/lang/invoke/CallSite;")
@@ -107,13 +107,13 @@ public class Tests {
     public static void test6() {
         var a = new TestClass1(400);
         var b = 4;
-        var c = new CallBuilder("add", "(Lru/DmN/bpl/test/Tests$TestClass1;I)I", "ru/DmN/bpl/test/Tests")
+        var c = new CallBuilder("add", "(Lru/DmN/bpl/test/JavaTests$TestClass1;I)I", "ru/DmN/bpl/test/JavaTests")
                 .arg(a)
                 .arg(b)
                 .invokeDynamic("bootstrap$", "(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/Class;ILjava/lang/Class;)Ljava/lang/invoke/CallSite;", 3)
                 .arg(TestClass1.class)
                 .arg(0)
-                .arg(Tests.class)
+                .arg(JavaTests.class)
                 .endI();
         Assertions.assertEquals(a.value + b, c);
     }
@@ -122,7 +122,7 @@ public class Tests {
      * CallBuilder (alloc)
      */
     public static void test18() {
-        var obj = new CallBuilder("<init>", "(I)V", "ru/DmN/bpl/test/Tests$TestClass1")
+        var obj = new CallBuilder("<init>", "(I)V", "ru/DmN/bpl/test/JavaTests$TestClass1")
                 .alloc()
                 .arg(202)
                 .invokeSpecial(false)
@@ -146,7 +146,7 @@ public class Tests {
      */
     public static void test8() {
         var obj = new TestClass1(777);
-        var value = new FieldBuilder("ru/DmN/bpl/test/Tests$TestClass1", "value", "I", obj).getI();
+        var value = new FieldBuilder("ru/DmN/bpl/test/JavaTests$TestClass1", "value", "I", obj).getI();
         Assertions.assertEquals(obj.value, value);
     }
 
@@ -155,10 +155,10 @@ public class Tests {
      * Установка статического поля
      */
     public static void test9() {
-        new FieldBuilder("ru/DmN/bpl/test/Tests$TestClass2", "GLOBAL_COUNTER", "I").set(202);
+        new FieldBuilder("ru/DmN/bpl/test/JavaTests$TestClass2", "GLOBAL_COUNTER", "I").set(202);
         Assertions.assertEquals(TestClass2.GLOBAL_COUNTER, 202);
 
-        new FieldBuilder("ru/DmN/bpl/test/Tests$TestClass2", "GLOBAL_COUNTER", "I").set(303);
+        new FieldBuilder("ru/DmN/bpl/test/JavaTests$TestClass2", "GLOBAL_COUNTER", "I").set(303);
         Assertions.assertEquals(TestClass2.GLOBAL_COUNTER, 303);
     }
 
@@ -168,7 +168,7 @@ public class Tests {
      */
     public static void test10() {
         var obj = new TestClass2(228);
-        new FieldBuilder("ru/DmN/bpl/test/Tests$TestClass2", "value", "I", obj).set(337);
+        new FieldBuilder("ru/DmN/bpl/test/JavaTests$TestClass2", "value", "I", obj).set(337);
         Assertions.assertEquals(obj.value, 337);
     }
 
@@ -183,7 +183,7 @@ public class Tests {
     }
 
     /**
-     * Checkcast
+     * CheckCast
      */
     public static void test12() {
         Object obj = 12;
@@ -230,7 +230,7 @@ public class Tests {
      */
     public static void test16() throws NoSuchMethodException, IllegalAccessException {
         var obj = MethodHandles.lookup().findStatic(TestClass0.class, "add", MethodType.methodType(int.class, int.class, int.class));
-        var ldc = BytecodeUtils.ldc$mh(Opcodes.H_INVOKESTATIC, "ru/DmN/bpl/test/Tests$TestClass0", "add", "(II)I", false);
+        var ldc = BytecodeUtils.ldc$mh(Opcodes.H_INVOKESTATIC, "ru/DmN/bpl/test/JavaTests$TestClass0", "add", "(II)I", false);
         Assertions.assertNotEquals(obj, ldc); // obj ptr != ldc ptr
         Assertions.assertEquals(obj.toString(), ldc.toString()); // obj method == ldc method
     }
@@ -302,15 +302,21 @@ public class Tests {
     }
 
     @BytecodeProcessor
-    @Extends(extend = "ru/DmN/bpl/test/Tests$TestClass3")
+    @Extends(extend = "ru/DmN/bpl/test/JavaTests$TestClass3")
     public static class TestClass4 {
         @MakeConstructor
         public void init() {
-            new CallBuilder("<init>", "()V", "ru/DmN/bpl/test/Tests$TestClass3").arg(this).invokeSpecial(false).end();
+            new CallBuilder("<init>", "()V", "ru/DmN/bpl/test/JavaTests$TestClass3")
+                    .arg(this)
+                    .invokeSpecial(false)
+                    .end();
         }
 
         public int foo() {
-            return new CallBuilder("foo", "()I", "ru/DmN/bpl/test/Tests$TestClass3").arg(this).invokeSpecial(false).endI() + 12;
+            return new CallBuilder("foo", "()I", "ru/DmN/bpl/test/JavaTests$TestClass3")
+                    .arg(this)
+                    .invokeSpecial(false)
+                    .endI() + 12;
         }
     }
 }

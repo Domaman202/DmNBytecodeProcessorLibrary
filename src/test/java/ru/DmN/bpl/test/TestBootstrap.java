@@ -9,6 +9,7 @@ import ru.DmN.uu.Unsafe;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.net.URLClassLoader;
 
@@ -17,13 +18,22 @@ public class TestBootstrap {
 
     @Test
     public void main() throws Throwable {
-        var tests = loader.smartLoad("ru.DmN.bpl.test.Tests", true);
-        for (var method : tests.getMethods()) {
-            if (method.getName().startsWith("test")) {
-                method.invoke(null);
-            }
-        }
+        test("ru.DmN.bpl.test.JavaTests");
+        test("ru.DmN.bpl.test.KotlinTests");
         loader.close();
+    }
+
+    private static void test(String clazz) {
+        try {
+            var tests = loader.smartLoad(clazz, true);
+            for (var method : tests.getMethods()) {
+                if (method.getName().startsWith("test")) {
+                    method.invoke(null);
+                }
+            }
+        } catch (IOException | ClassNotFoundException | InvocationTargetException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static class SmartClassLoader extends URLClassLoader {

@@ -256,23 +256,40 @@ public class ClassProcessor extends ClassNode {
                             replaceOpcode(method, instr, new InsnNode((Integer) parseObject(inst)));
                         }
                         case "ldc$mh" -> {
-                            var inst0 = instructions.get(--i); // isInterface
+                            // IsInterface
+                            while (instructions.get(i - 1).getOpcode() == -1) i--;
+                            var inst0 = instructions.get(--i);
                             instructions.remove(inst0);
-                            var inst1 = instructions.get(--i); // desc
+                            // Desc
+                            while (instructions.get(i - 1).getOpcode() == -1) i--;
+                            var inst1 = instructions.get(--i);
                             instructions.remove(inst1);
-                            var inst2 = instructions.get(--i); // name
+                            // Name
+                            while (instructions.get(i - 1).getOpcode() == -1) i--;
+                            var inst2 = instructions.get(--i);
                             instructions.remove(inst2);
-                            var inst3 = instructions.get(--i); // owner
+                            // Owner
+                            while (instructions.get(i - 1).getOpcode() == -1) i--;
+                            var inst3 = instructions.get(--i);
                             instructions.remove(inst3);
-                            var inst4 = instructions.get(--i); // tag
+                            // Tag
+                            while (instructions.get(i - 1).getOpcode() == -1) i--;
+                            var inst4 = instructions.get(--i);
                             instructions.remove(inst4);
-                            replaceOpcode(method, instr, new LdcInsnNode(new Handle(
-                                    (int) parseObject(inst4),
-                                    (String) parseObject(inst3),
-                                    (String) parseObject(inst2),
-                                    (String) parseObject(inst1),
-                                    (int) parseObject(inst0) == 1
-                            )));
+                            //
+                            replaceOpcode(
+                                    method,
+                                    instr,
+                                    new LdcInsnNode(
+                                            new Handle(
+                                                    (int) parseObject(inst4),
+                                                    (String) parseObject(inst3),
+                                                    (String) parseObject(inst2),
+                                                    (String) parseObject(inst1),
+                                                    (int) parseObject(inst0) == 1
+                                            )
+                                    )
+                            );
                         }
                         case "ldc$mt" -> {
                             var inst = instructions.get(--i);
