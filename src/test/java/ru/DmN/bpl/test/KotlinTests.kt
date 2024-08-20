@@ -13,6 +13,7 @@ import java.lang.invoke.MethodHandles
 import java.lang.invoke.MethodType
 import java.lang.reflect.Modifier
 
+@Suppress("unused")
 @BytecodeProcessor
 object KotlinTests {
     @FMRename(desc = "Ljava/lang/Class;")
@@ -38,7 +39,7 @@ object KotlinTests {
     /**
      * Удаление кода №2
      */
-    @DeleteLines(start = [44], end = [45])
+    @DeleteLines(start = [45], end = [46])
     @JvmStatic
     fun test17() {
         Assertions.fail<Any>()
@@ -268,6 +269,11 @@ object KotlinTests {
         Unsafe.unsafe.putLong(TestClass4::class.java, 16L, Unsafe.unsafe.getLong(Runnable::class.java, 16L))
         Assertions.assertTrue(TestClass4::class.java.isInterface)
         Assertions.assertEquals(obj1.foo(), 33)
+    }
+
+    @JvmStatic
+    fun test777() {
+        println("All kotlin success!")
     }
 
     @JvmStatic

@@ -1,9 +1,10 @@
 plugins {
     id 'java'
+    id 'maven-publish'
     id 'org.jetbrains.kotlin.jvm'
 }
 
-group 'ru.DmN.BytecodeProcessorLibrary'
+group 'ru.DmN'
 version '12.4'
 
 repositories {
@@ -14,7 +15,7 @@ dependencies {
     implementation "org.jetbrains:annotations:23.0.0"
     implementation group: 'org.ow2.asm', name: 'asm', version: '9.3'
     implementation group: 'org.ow2.asm', name: 'asm-tree', version: '9.3'
-    testImplementation files("inc/DmNUnsafeUtils-5.1.jar")
+    testImplementation files("inc/DmNUnsafeUtils-12.0.jar")
     testImplementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.12.0'
     testImplementation group: 'org.apiguardian', name: 'apiguardian-api', version: '1.1.2'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.0'
@@ -27,12 +28,10 @@ test {
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier = 'sources'
     from sourceSets.main.allSource
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
     from javadoc.destinationDir
 }
 
@@ -43,13 +42,26 @@ artifacts {
 
 sourceCompatibility = JavaVersion.VERSION_16
 targetCompatibility = JavaVersion.VERSION_16
+
 compileKotlin {
     kotlinOptions {
         jvmTarget = "16"
     }
 }
+
 compileTestKotlin {
     kotlinOptions {
         jvmTarget = "16"
+    }
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = project.group
+            artifactId = 'DmNBytecodeUtils'
+            version = project.version
+            from components.java
+        }
     }
 }

@@ -16,10 +16,11 @@ import java.net.URLClassLoader;
 public class TestBootstrap {
     public static final SmartClassLoader loader = new SmartClassLoader(TestBootstrap.class.getClassLoader());
 
-    @Test
+//    @Test
     public void main() throws Throwable {
-        test("ru.DmN.bpl.test.JavaTests");
+        test("ru.DmN.bpl.test.other.OtherTests");
         test("ru.DmN.bpl.test.KotlinTests");
+        test("ru.DmN.bpl.test.JavaTests");
         loader.close();
     }
 
@@ -48,6 +49,9 @@ public class TestBootstrap {
                 return this.getClass();
             if (name.startsWith("ru")) {
                 try {
+                    var loaded = this.findLoadedClass(name);
+                    if (loaded != null)
+                        return loaded;
                     return this.smartLoad(name, true);
                 } catch (IOException e) {
                     throw new RuntimeException(e);

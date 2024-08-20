@@ -248,7 +248,7 @@ public class JavaTests {
     }
 
     public static void test777() {
-        System.out.println("All success!");
+        System.out.println("All java success!");
     }
 
     public static CallSite bootstrapA(MethodHandles.Lookup lookup, String name, MethodType type) throws NoSuchMethodException, IllegalAccessException {
